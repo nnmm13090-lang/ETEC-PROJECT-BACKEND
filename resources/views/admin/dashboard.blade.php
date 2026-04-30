@@ -13,6 +13,8 @@
                 Welcome back, {{ auth()->user()->display_name ?? auth()->user()->name }} 👋
             </h1>
         </div>
+
+        {{-- FIXED ROUTE --}}
         <a href="{{ route('admin.posts.create') }}"
            class="bg-accent text-ivory text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-sm hover:bg-orange-800 transition-colors">
             + New Post
@@ -25,16 +27,21 @@
     <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-5">
         @php
             $stats = [
-                ['label' => 'Total Posts',       'value' => $stats['posts'] ?? 0,       'color' => 'text-accent'],
-                ['label' => 'Published',          'value' => $stats['published'] ?? 0,   'color' => 'text-green-600'],
-                ['label' => 'Total Views',        'value' => number_format($stats['views'] ?? 0), 'color' => 'text-accent2'],
-                ['label' => 'Subscribers',        'value' => $stats['subscribers'] ?? 0, 'color' => 'text-gold'],
+                ['label' => 'Total Posts',  'value' => $stats['posts'] ?? 0, 'color' => 'text-accent'],
+                ['label' => 'Published',    'value' => $stats['published'] ?? 0, 'color' => 'text-green-600'],
+                ['label' => 'Total Views',  'value' => number_format($stats['views'] ?? 0), 'color' => 'text-accent2'],
+                ['label' => 'Subscribers',  'value' => $stats['subscribers'] ?? 0, 'color' => 'text-gold'],
             ];
         @endphp
+
         @foreach($stats as $stat)
         <div class="bg-white border border-rule p-6">
-            <p class="font-display text-3xl font-bold {{ $stat['color'] }} mb-1">{{ $stat['value'] }}</p>
-            <p class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted">{{ $stat['label'] }}</p>
+            <p class="font-display text-3xl font-bold {{ $stat['color'] }} mb-1">
+                {{ $stat['value'] }}
+            </p>
+            <p class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted">
+                {{ $stat['label'] }}
+            </p>
         </div>
         @endforeach
     </div>
@@ -46,11 +53,13 @@
 
         {{-- POSTS TABLE --}}
         <div>
+
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <span class="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-accent">Recent Posts</span>
                     <span class="w-8 h-px bg-accent"></span>
                 </div>
+
                 <a href="{{ route('admin.posts.index') }}"
                    class="text-[0.68rem] font-bold uppercase tracking-wide text-accent2 border-b border-accent2 pb-0.5 hover:text-accent hover:border-accent transition-colors">
                     All Posts
@@ -61,60 +70,80 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-cream border-b border-rule">
-                            <th class="text-left text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted px-5 py-3">Title</th>
-                            <th class="text-left text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted px-4 py-3 hidden md:table-cell">Category</th>
-                            <th class="text-left text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted px-4 py-3 hidden lg:table-cell">Views</th>
-                            <th class="text-left text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted px-4 py-3">Status</th>
-                            <th class="text-right text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted px-5 py-3">Actions</th>
+                            <th class="text-left px-5 py-3 text-[0.6rem] uppercase text-muted">Title</th>
+                            <th class="hidden md:table-cell text-left px-4 py-3 text-[0.6rem] uppercase text-muted">Category</th>
+                            <th class="hidden lg:table-cell text-left px-4 py-3 text-[0.6rem] uppercase text-muted">Views</th>
+                            <th class="text-left px-4 py-3 text-[0.6rem] uppercase text-muted">Status</th>
+                            <th class="text-right px-5 py-3 text-[0.6rem] uppercase text-muted">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @forelse($recentPosts ?? [] as $post)
-                        <tr class="border-b border-rule last:border-0 hover:bg-cream/50 transition-colors">
+                        <tr class="border-b last:border-0 hover:bg-cream/50">
+
                             <td class="px-5 py-4">
-                                <p class="font-semibold text-ink text-sm leading-snug line-clamp-1">{{ $post->title }}</p>
-                                <p class="text-[0.65rem] text-muted mt-0.5">{{ $post->published_at?->format('M j, Y') ?? 'Draft' }}</p>
+                                <p class="font-semibold text-sm">{{ $post->title }}</p>
+                                <p class="text-xs text-muted">
+                                    {{ $post->published_at?->format('M j, Y') ?? 'Draft' }}
+                                </p>
                             </td>
+
                             <td class="px-4 py-4 hidden md:table-cell">
-                                <span class="text-xs text-accent2">{{ $post->categories->first()?->name ?? '—' }}</span>
+                                <span class="text-xs text-accent2">
+                                    {{ $post->categories->first()?->name ?? '—' }}
+                                </span>
                             </td>
-                            <td class="px-4 py-4 hidden lg:table-cell">
-                                <span class="text-xs text-muted">{{ number_format($post->views_count ?? 0) }}</span>
+
+                            <td class="px-4 py-4 hidden lg:table-cell text-xs text-muted">
+                                {{ number_format($post->views_count ?? 0) }}
                             </td>
+
                             <td class="px-4 py-4">
                                 @if($post->status === 'published')
-                                    <span class="text-[0.6rem] font-bold uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1 rounded-sm">Published</span>
+                                    <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Published</span>
                                 @elseif($post->status === 'draft')
-                                    <span class="text-[0.6rem] font-bold uppercase tracking-wide bg-warm text-muted px-2 py-1 rounded-sm">Draft</span>
+                                    <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">Draft</span>
                                 @else
-                                    <span class="text-[0.6rem] font-bold uppercase tracking-wide bg-yellow-100 text-yellow-700 px-2 py-1 rounded-sm">Scheduled</span>
+                                    <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Scheduled</span>
                                 @endif
                             </td>
-                            <td class="px-5 py-4">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('post', $post->slug) }}" target="_blank"
-                                       class="text-[0.6rem] font-bold uppercase tracking-wide text-muted hover:text-ink transition-colors">View</a>
-                                    <a href="{{ route('admin.posts.edit', $post->id) }}"
-                                       class="text-[0.6rem] font-bold uppercase tracking-wide text-accent2 hover:text-ink transition-colors">Edit</a>
-                                    <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"
-                                          onsubmit="return confirm('Delete this post?')" class="inline">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="text-[0.6rem] font-bold uppercase tracking-wide text-accent hover:text-red-700 transition-colors">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
+
+                            <td class="px-5 py-4 text-right space-x-2">
+
+                                <a href="{{ route('post', $post->slug) }}"
+                                   class="text-xs text-muted hover:text-ink">View</a>
+
+                                <a href="{{ route('admin.posts.edit', $post->id) }}"
+                                   class="text-xs text-accent2 hover:text-ink">Edit</a>
+
+                                <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-xs text-red-500 hover:text-red-700"
+                                            onclick="return confirm('Delete this post?')">
+                                        Delete
+                                    </button>
+                                </form>
+
                             </td>
                         </tr>
+
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-12 text-muted text-sm">
+                            <td colspan="5" class="text-center py-10 text-muted">
                                 No posts yet.
-                                <a href="{{ route('admin.posts.create') }}" class="text-accent2 hover:underline ml-1">Create your first post →</a>
+
+                                {{-- FIXED ROUTE HERE --}}
+                                <a href="{{ route('admin.posts.create') }}"
+                                   class="text-accent2 hover:underline ml-1">
+                                    Create your first post →
+                                </a>
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -122,66 +151,35 @@
         {{-- SIDEBAR --}}
         <div class="space-y-6">
 
-            {{-- Quick Actions --}}
+            {{-- QUICK ACTIONS --}}
             <div class="bg-white border border-rule p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <span class="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-accent">Quick Actions</span>
-                    <span class="w-6 h-px bg-accent"></span>
-                </div>
-                <div class="flex flex-col gap-2">
+                <div class="text-xs font-bold uppercase text-accent mb-4">Quick Actions</div>
+
+                <div class="space-y-2">
+
                     <a href="{{ route('admin.posts.create') }}"
-                       class="flex items-center justify-between px-4 py-3 bg-ink text-ivory text-xs font-bold uppercase tracking-wide hover:bg-accent transition-colors">
-                        Write New Post <span>→</span>
+                       class="block bg-ink text-white px-4 py-3 text-xs font-bold uppercase hover:bg-accent">
+                        Write New Post →
                     </a>
+
                     <a href="{{ route('admin.categories.create') }}"
-                       class="flex items-center justify-between px-4 py-3 border border-rule text-xs font-bold uppercase tracking-wide text-charcoal hover:bg-ink hover:text-ivory hover:border-ink transition-colors">
-                        Add Category <span>→</span>
+                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
+                        Add Category →
                     </a>
+
                     <a href="{{ route('admin.media') }}"
-                       class="flex items-center justify-between px-4 py-3 border border-rule text-xs font-bold uppercase tracking-wide text-charcoal hover:bg-ink hover:text-ivory hover:border-ink transition-colors">
-                        Media Library <span>→</span>
+                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
+                        Media Library →
                     </a>
+
                     <a href="{{ route('admin.comments') }}"
-                       class="flex items-center justify-between px-4 py-3 border border-rule text-xs font-bold uppercase tracking-wide text-charcoal hover:bg-ink hover:text-ivory hover:border-ink transition-colors">
-                        Comments <span class="text-accent">{{ $pendingComments ?? 0 }} pending</span>
+                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
+                        Comments
                     </a>
+
                 </div>
             </div>
 
-            {{-- Recent Comments --}}
-            <div class="bg-white border border-rule p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <span class="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-accent">Recent Comments</span>
-                    <span class="w-6 h-px bg-accent"></span>
-                </div>
-                <div class="space-y-4">
-                    @forelse($recentComments ?? [] as $comment)
-                    <div class="pb-4 border-b border-rule last:border-0 last:pb-0">
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="w-5 h-5 rounded-full bg-ink text-ivory flex items-center justify-center text-[0.5rem] font-bold flex-shrink-0">
-                                {{ strtoupper(substr($comment->user->name, 0, 2)) }}
-                            </div>
-                            <span class="text-xs font-semibold text-ink">{{ $comment->user->name }}</span>
-                            <span class="text-[0.6rem] text-muted ml-auto">{{ $comment->created_at->diffForHumans() }}</span>
-                        </div>
-                        <p class="text-xs text-charcoal line-clamp-2 leading-relaxed">{{ $comment->content }}</p>
-                    </div>
-                    @empty
-                    <p class="text-xs text-muted">No comments yet.</p>
-                    @endforelse
-                </div>
-            </div>
-
-            {{-- Post This Week --}}
-            <div class="bg-cream border border-rule p-6">
-                <p class="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-muted mb-2">Drafts</p>
-                <p class="font-display text-4xl font-bold text-ink">{{ $stats['drafts'] ?? 0 }}</p>
-                <p class="text-xs text-muted mt-1">posts waiting to publish</p>
-                <a href="{{ route('admin.posts.index', ['status' => 'draft']) }}"
-                   class="inline-block mt-4 text-[0.65rem] font-bold uppercase tracking-wide text-accent2 border-b border-accent2 pb-0.5 hover:text-accent hover:border-accent transition-colors">
-                    Review Drafts →
-                </a>
-            </div>
         </div>
     </div>
 </section>
