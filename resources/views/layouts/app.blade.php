@@ -21,15 +21,6 @@
                         body: ['"Source Serif 4"', 'Georgia', 'serif'],
                     },
                     colors: {
-<<<<<<< HEAD
-                        ivory:'#f8f5f0',
-                        warm:'#e8e0d3',
-                        ink:'#1a1714',
-                        muted:'#8a8278',
-                        rule:'#d5cec4',
-                        accent:'#b5451b',
-                        gold:'#c9a84c',
-=======
                         ivory: '#f8f5f0',
                         cream: '#f0ebe2',
                         warm: '#e8e0d3',
@@ -43,23 +34,16 @@
                     },
                     keyframes: {
                         fadeUp: {
-                            '0%': {
-                                opacity: '0',
-                                transform: 'translateY(20px)'
-                            },
-                            '100%': {
-                                opacity: '1',
-                                transform: 'translateY(0)'
-                            },
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     },
                     animation: {
-                        'fade-up': 'fadeUp 0.5s ease both',
+                        'fade-up':   'fadeUp 0.5s ease both',
                         'fade-up-1': 'fadeUp 0.5s ease 0.1s both',
                         'fade-up-2': 'fadeUp 0.5s ease 0.2s both',
                         'fade-up-3': 'fadeUp 0.5s ease 0.3s both',
                         'fade-up-4': 'fadeUp 0.5s ease 0.4s both',
->>>>>>> 4c26c6bfbd11ab23735abb8b5e0a02522c659640
                     }
                 }
             }
@@ -67,66 +51,11 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Source Serif 4', Georgia, serif;
-        }
-
-        .font-display {
-            font-family: 'Playfair Display', Georgia, serif;
-        }
+        body { font-family: 'Source Serif 4', Georgia, serif; }
+        .font-display { font-family: 'Playfair Display', Georgia, serif; }
     </style>
 </head>
 
-<<<<<<< HEAD
-<body class="bg-ivory text-ink">
-
-{{-- NAVBAR --}}
-<nav class="bg-ink sticky top-0 z-50 border-b-[3px] border-accent">
-    <div class="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-16">
-
-        <a href="{{ route('home') }}" class="font-display text-2xl text-ivory">
-            The<span class="text-accent">.</span>Desk
-        </a>
-
-        <div class="hidden md:flex items-center gap-10">
-
-            <a href="{{ route('home') }}" class="text-warm hover:text-gold uppercase text-xs font-bold">Home</a>
-            <a href="{{ route('blog') }}" class="text-warm hover:text-gold uppercase text-xs font-bold">Blog</a>
-            <a href="{{ route('about') }}" class="text-warm hover:text-gold uppercase text-xs font-bold">About</a>
-            <a href="{{ route('contact') }}" class="text-warm hover:text-gold uppercase text-xs font-bold">Contact</a>
-
-        </div>
-
-        <div class="flex items-center gap-3">
-
-            @auth
-
-                {{-- ADMIN BUTTON --}}
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}"
-                       class="text-xs font-bold uppercase bg-gold text-ink px-4 py-2 rounded hover:bg-yellow-600">
-                        Dashboard
-                    </a>
-                @endif
-
-                <span class="text-warm text-xs">{{ auth()->user()->name }}</span>
-
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-xs bg-accent text-white px-4 py-2 rounded">
-                        Logout
-                    </button>
-                </form>
-
-            @else
-                <a href="{{ route('login') }}" class="text-xs bg-accent text-white px-4 py-2 rounded">Login</a>
-                <a href="{{ route('register') }}" class="text-xs bg-accent text-white px-4 py-2 rounded">Register</a>
-            @endauth
-
-        </div>
-    </div>
-</nav>
-=======
 <body class="bg-ivory text-ink antialiased">
 
     {{-- NAVBAR --}}
@@ -144,46 +73,53 @@
                 <div class="md:flex items-center gap-8">
                     <a href="{{ route('home') }}"
                         class="text-md font-semibold uppercase tracking-widest transition-colors
-                      {{ request()->routeIs('home') ? 'text-gold' : 'text-warm hover:text-gold' }}">
+                        {{ request()->routeIs('home') ? 'text-gold' : 'text-warm hover:text-gold' }}">
                         Home
                     </a>
                     <a href="{{ route('blog') }}"
                         class="text-md font-semibold uppercase tracking-widest transition-colors
-                      {{ request()->routeIs('blog') ? 'text-gold' : 'text-warm hover:text-gold' }}">
+                        {{ request()->routeIs('blog') ? 'text-gold' : 'text-warm hover:text-gold' }}">
                         Blog
                     </a>
                     <a href="{{ route('about') }}"
                         class="text-md font-semibold uppercase tracking-widest transition-colors
-                      {{ request()->routeIs('about') ? 'text-gold' : 'text-warm hover:text-gold' }}">
+                        {{ request()->routeIs('about') ? 'text-gold' : 'text-warm hover:text-gold' }}">
                         About
                     </a>
                     <a href="{{ route('contact') }}"
                         class="text-md font-semibold uppercase tracking-widest transition-colors
-                      {{ request()->routeIs('contact') ? 'text-gold' : 'text-warm hover:text-gold' }}">
+                        {{ request()->routeIs('contact') ? 'text-gold' : 'text-warm hover:text-gold' }}">
                         Contact
                     </a>
                 </div>
+
                 <div class="md:flex items-center gap-8">
                     @auth
-                    <span class="text-xs font-semibold uppercase tracking-widest text-warm">
-                        {{ auth()->user()->name }}
-                    </span>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
-                            Logout
-                        </button>
-                    </form>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-warm">
+                            {{ auth()->user()->name }}
+                        </span>
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}"
+                               class="text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors">
+                                Dashboard
+                            </a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
+                                Logout
+                            </button>
+                        </form>
                     @else
-                    <a href="{{ route('login') }}"
-                        class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
-                        Login
-                    </a>
-                    <a href="{{ route('register') }}"
-                        class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
-                        Register
-                    </a>
+                        <a href="{{ route('login') }}"
+                            class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
+                            Login
+                        </a>
+                        <a href="{{ route('register') }}"
+                            class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm hover:bg-orange-800 transition-colors">
+                            Register
+                        </a>
                     @endauth
                 </div>
             </div>
@@ -210,58 +146,40 @@
                 class="text-xs font-semibold uppercase tracking-widest transition-colors {{ request()->routeIs('contact') ? 'text-gold' : 'text-warm hover:text-gold' }}">
                 Contact
             </a>
-            @auth 
-            <span class="text-xs font-semibold uppercase tracking-widest text-warm">{{ auth()->user()->name }}</span>
-            <form action="{{ route('logout') }}" method="POST" class="w-fit"> 
-                @csrf 
-                <button type="submit" class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm w-fit mt-5"> Logout </button> 
-            </form> 
+            @auth
+                <span class="text-xs font-semibold uppercase tracking-widest text-warm">
+                    {{ auth()->user()->name }}
+                </span>
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors">
+                        Dashboard
+                    </a>
+                @endif
+                <form action="{{ route('logout') }}" method="POST" class="w-fit">
+                    @csrf
+                    <button type="submit"
+                        class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm w-fit mt-5">
+                        Logout
+                    </button>
+                </form>
             @else
-            <a href="{{ route('login') }}" class="text-xs font-semibold uppercase tracking-widest text-warm hover:text-gold">Login</a>
-            <a href="{{ route('register') }}" class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm w-fit">Register</a>
+                <a href="{{ route('login') }}"
+                    class="text-xs font-semibold uppercase tracking-widest text-warm hover:text-gold">
+                    Login
+                </a>
+                <a href="{{ route('register') }}"
+                    class="text-xs font-semibold uppercase tracking-widest bg-accent text-ivory px-5 py-2 rounded-sm w-fit">
+                    Register
+                </a>
             @endauth
         </div>
     </nav>
     @endunless
->>>>>>> 4c26c6bfbd11ab23735abb8b5e0a02522c659640
 
     {{-- PAGE CONTENT --}}
     @yield('content')
 
-<<<<<<< HEAD
-{{-- FOOTER (RESTORED) --}}
-<footer class="bg-ink text-warm pt-16 pb-8 px-6 lg:px-10 mt-16">
-    <div class="max-w-7xl mx-auto">
-
-        <div class="grid md:grid-cols-4 gap-10">
-
-            <div>
-                <h2 class="font-display text-2xl text-ivory">The<span class="text-accent">.</span>Desk</h2>
-                <p class="text-sm mt-3 text-muted">
-                    A personal blog about technology, business, and ideas.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-xs uppercase text-muted mb-3">Links</h4>
-                <a href="{{ route('home') }}" class="block text-sm hover:text-gold">Home</a>
-                <a href="{{ route('blog') }}" class="block text-sm hover:text-gold">Blog</a>
-                <a href="{{ route('about') }}" class="block text-sm hover:text-gold">About</a>
-                <a href="{{ route('contact') }}" class="block text-sm hover:text-gold">Contact</a>
-            </div>
-
-            <div>
-                <h4 class="text-xs uppercase text-muted mb-3">Topics</h4>
-                <p class="text-sm text-muted">Tech</p>
-                <p class="text-sm text-muted">Business</p>
-                <p class="text-sm text-muted">Ideas</p>
-            </div>
-
-            <div>
-                <h4 class="text-xs uppercase text-muted mb-3">More</h4>
-                <p class="text-sm text-muted">Newsletter</p>
-                <p class="text-sm text-muted">RSS Feed</p>
-=======
     {{-- FOOTER --}}
     @unless(View::hasSection('hideChrome'))
     <footer class="bg-ink text-warm pt-16 pb-8 px-6 lg:px-10">
@@ -305,21 +223,8 @@
             <div class="flex flex-col sm:flex-row justify-between items-center pt-7 border-t border-white/[0.07] gap-2">
                 <span class="text-xs text-[#5a5450]">© {{ date('Y') }} The Desk. All rights reserved.</span>
                 <span class="text-xs text-[#5a5450]">Made with care &amp; good fonts.</span>
->>>>>>> 4c26c6bfbd11ab23735abb8b5e0a02522c659640
             </div>
-
         </div>
-<<<<<<< HEAD
-
-        <div class="border-t border-white/10 mt-10 pt-6 text-center text-xs text-muted">
-            © {{ date('Y') }} The Desk. All rights reserved.
-        </div>
-
-    </div>
-</footer>
-
-</body>
-=======
     </footer>
     @endunless
 
@@ -335,9 +240,7 @@
                 const el = document.querySelector(a.getAttribute('href'));
                 if (el) {
                     e.preventDefault();
-                    el.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    el.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         });
@@ -345,5 +248,4 @@
     @stack('scripts')
 </body>
 
->>>>>>> 4c26c6bfbd11ab23735abb8b5e0a02522c659640
 </html>

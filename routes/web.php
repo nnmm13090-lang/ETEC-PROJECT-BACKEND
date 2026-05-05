@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PostController;
+use App\Models\Categories;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use App\Models\Post;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,36 +19,58 @@ use App\Models\Post;
 */
 
 Route::get('/', function () {
-    return view('pages.home');
+    $recentPosts = Post::with(['author', 'category'])
+        ->published()
+        ->latest('published_at')
+        ->take(6)
+        ->get();
+
+    $categories = Categories::withCount('posts')->get();
+
+    return view('pages.home', compact('recentPosts', 'categories'));
 })->name('home');
 
 Route::get('/about', function () {
-    return view('pages.about');
+    $categories = Categories::all();
+    return view('pages.about', compact('categories'));
 })->name('about');
 
-Route::get('/contact', function () {
-    return view('pages.contact');
-})->name('contact');
+Route::get('/contact', fn () => view('pages.contact'))->name('contact');
 
 Route::post('/contact', function (Request $request) {
-
     $request->validate([
-        'name' => 'required',
-        'email' => 'required|email',
+        'name'    => 'required',
+        'email'   => 'required|email',
         'subject' => 'required',
         'message' => 'required|min:10',
     ]);
-
     return back()->with('success', 'Message sent!');
 })->name('contact.send');
 
-Route::get('/blog', function () {
+Route::get('/blog', function (Request $request) {
+    $query = Post::with(['author', 'category'])
+        ->published()
+        ->latest('published_at');
 
-    $posts = Post::latest()->paginate(9);
+    if ($request->category) {
+        $query->whereHas('category', fn ($q) =>
+            $q->where('slug', $request->category)
+        );
+    }
 
-    return view('pages.blog', compact('posts'));
+    $posts      = $query->paginate(9)->withQueryString();
+    $categories = Categories::withCount('posts')->get();
 
+    return view('pages.blog', compact('posts', 'categories'));
 })->name('blog');
+
+// Single post — public
+Route::get('/post/{slug}', [PostController::class, 'show'])->name('post');
+
+// Comments — auth required
+Route::post('/post/{post}/comment', [CommentController::class, 'store'])
+    ->middleware('auth')
+    ->name('comment.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -54,17 +80,15 @@ Route::get('/blog', function () {
 
 Route::middleware('guest')->group(function () {
 
-    // LOGIN
     Route::get('/login', fn () => view('auth.login'))->name('login');
 
     Route::post('/login', function (Request $request) {
-
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required|min:6',
         ]);
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => 'Invalid credentials',
             ]);
@@ -77,28 +101,23 @@ Route::middleware('guest')->group(function () {
             : redirect()->route('home');
     });
 
-    // REGISTER
     Route::get('/register', fn () => view('auth.register'))->name('register');
 
     Route::post('/register', function (Request $request) {
-
         $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'name'     => 'required',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+        User::create([
+            'name'     => $data['name'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => 'user',
+            'role'     => 'user',
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('home');
+        return redirect()->route('login')->with('status', 'Account created! Please sign in.');
     });
 
 });
@@ -110,19 +129,15 @@ Route::middleware('guest')->group(function () {
 */
 
 Route::post('/logout', function (Request $request) {
-
     Auth::logout();
-
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-
     return redirect()->route('home');
-
 })->middleware('auth')->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN PANEL (POST SYSTEM)
+| ADMIN PANEL
 |--------------------------------------------------------------------------
 */
 
@@ -131,74 +146,37 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
+    // Dashboard
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        $stats = [
+            'posts'       => Post::count(),
+            'published'   => Post::where('status', 'published')->count(),
+            'views'       => Post::sum('views'),
+            'subscribers' => 0,
+        ];
+
+        $posts = Post::with(['author', 'category'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $recentPosts = $posts;
+
+        return view('admin.dashboard', compact('stats', 'posts', 'recentPosts'));
     })->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | POSTS (FULL CRUD STRUCTURE)
-    |--------------------------------------------------------------------------
-    */
+    // Posts CRUD
+    Route::resource('posts', PostController::class);
 
-    // LIST POSTS
-    Route::get('/posts', function () {
-        return view('admin.posts.index');
-    })->name('posts.index');
-
-    // CREATE POST FORM
-    Route::get('/posts/create', function () {
-        return view('admin.posts.create');
-    })->name('posts.create');
-
-    // STORE POST (FAKE FOR NOW)
-    Route::post('/posts', function (Request $request) {
-
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-        ]);
-
-        return redirect()->route('admin.posts.index')
-            ->with('success', 'Post created successfully');
-    })->name('posts.store');
-
-    // EDIT POST
-    Route::get('/posts/{id}/edit', function ($id) {
-        return view('admin.posts.edit', compact('id'));
-    })->name('posts.edit');
-
-    /*
-    |--------------------------------------------------------------------------
-    | CATEGORIES
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/categories', fn () => view('admin.category.index'))->name('categories.index');
-    Route::get('/categories/create', fn () => view('admin.category.create'))->name('categories.create');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PLACEHOLDERS
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/users', fn () => view('admin.user'))->name('users');
-    Route::get('/media', fn () => view('admin.dashboard'))->name('media');
-    Route::get('/comments', fn () => view('admin.dashboard'))->name('comments');
-});
-
-Route::get('/', function () {
-
-    $recentPosts = Post::latest()->take(6)->get();
-
-    return view('pages.home', [
-        'recentPosts' => $recentPosts
+    // Categories
+    Route::resource('categories', CategoriesController::class)->only([
+        'index', 'create', 'store', 'destroy'
     ]);
 
-})->name('home');
+    // Placeholders
+    Route::get('/users',    fn () => view('admin.user'))->name('users');
+    Route::get('/media',    fn () => view('admin.dashboard'))->name('media');
+    Route::get('/comments', fn () => view('admin.dashboard'))->name('comments');
+    Route::get('/post/{slug}', [PostController::class, 'show'])->name('post');
+
+});
