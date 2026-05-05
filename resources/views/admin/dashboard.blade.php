@@ -155,29 +155,49 @@
 
         </div>
 
-        {{-- SIDEBAR --}}
+       {{-- SIDEBAR --}}
         <div class="space-y-6">
-
-            {{-- QUICK ACTIONS --}}
+            {{-- USERS TABLE --}}
             <div class="bg-white border border-rule p-6">
-                <div class="text-xs font-bold uppercase text-accent mb-4">Quick Actions</div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-xs font-bold uppercase text-accent">Recent Users</div>
+                    <a href="{{ route('admin.users') }}"
+                       class="text-[0.68rem] font-bold uppercase tracking-wide text-accent2 border-b border-accent2 pb-0.5 hover:text-accent hover:border-accent transition-colors">
+                        All Users
+                    </a>
+                </div>
 
-                <div class="space-y-2">
-                    <a href="{{ route('admin.posts.create') }}"
-                       class="block bg-ink text-white px-4 py-3 text-xs font-bold uppercase hover:bg-accent">
-                        Write New Post →
-                    </a>
-                    <a href="{{ route('admin.categories.create') }}"
-                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
-                        Add Category →
-                    </a>
-                    <a href="{{ route('admin.media') }}"
-                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
-                        Media Library →
-                    </a>
-                    <a href="{{ route('admin.comments') }}"
-                       class="block border px-4 py-3 text-xs font-bold uppercase hover:bg-ink hover:text-white">
-                        Comments
+                <div class="space-y-3">
+                    @forelse(\App\Models\User::latest()->take(5)->get() as $user)
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-ink text-ivory flex items-center justify-center text-[0.55rem] font-bold flex-shrink-0">
+                                {{ strtoupper(substr($user->name, 0, 2)) }}
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-ink leading-none">{{ $user->name }}</p>
+                                <p class="text-[0.6rem] text-muted mt-0.5">{{ $user->email }}</p>
+                            </div>
+                        </div>
+                        @if($user->role === 'admin')
+                            <span class="text-[0.58rem] font-bold uppercase bg-accent/10 text-accent px-2 py-0.5 rounded">
+                                Admin
+                            </span>
+                        @else
+                            <span class="text-[0.58rem] font-bold uppercase bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
+                                User
+                            </span>
+                        @endif
+                    </div>
+                    @empty
+                        <p class="text-xs text-muted">No users found.</p>
+                    @endforelse
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-rule">
+                    <a href="{{ route('admin.users') }}"
+                       class="text-xs font-bold uppercase tracking-wide text-accent2 hover:text-accent">
+                        View All Users →
                     </a>
                 </div>
             </div>
