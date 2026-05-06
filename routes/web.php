@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController; 
 use App\Models\Categories;
 use App\Models\Post;
 use App\Models\User;
@@ -11,8 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use App\Http\Controllers\UserController;
-
 /*
 |--------------------------------------------------------------------------
 | PUBLIC PAGES
@@ -174,12 +173,12 @@ Route::middleware(['auth', 'admin'])
         'index', 'create', 'store', 'destroy'
     ]);
 
-    // Placeholders
+    // Users
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-role', [UserController::class, 'toggleRole'])->name('users.toggle-role');
+
+    // Placeholders
     Route::get('/media',    fn () => view('admin.dashboard'))->name('media');
     Route::get('/comments', fn () => view('admin.dashboard'))->name('comments');
-    Route::get('/post/{slug}', [PostController::class, 'show'])->name('post');
-
 });

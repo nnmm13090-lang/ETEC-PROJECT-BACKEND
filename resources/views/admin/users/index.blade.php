@@ -5,9 +5,15 @@
 
 <section class="bg-ink text-ivory px-6 lg:px-10 py-10 border-b border-white/10">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <div>
-            <p class="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-accent mb-1">Admin Panel</p>
-            <h1 class="font-display text-3xl font-bold tracking-tight">All Users</h1>
+        <div class="flex items-center gap-10">
+            <a href="{{ route('admin.dashboard') }}"
+               class="text-ivory/60 hover:text-ivory transition-colors text-sm">
+                ← Back
+            </a>
+            <div>
+                <p class="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-accent mb-1">Admin Panel</p>
+                <h1 class="font-display text-3xl font-bold tracking-tight">All Users</h1>
+            </div>
         </div>
         <span class="text-xs text-muted uppercase tracking-widest">
             {{ $users->total() }} total
@@ -78,7 +84,6 @@
                         </td>
                         <td class="px-5 py-4 text-right space-x-2">
                             @if($user->id !== auth()->id())
-                                {{-- Toggle Role --}}
                                 <form action="{{ route('admin.users.toggle-role', $user) }}" method="POST" class="inline">
                                     @csrf @method('PATCH')
                                     <button class="text-xs text-accent2 hover:text-ink"
@@ -89,7 +94,6 @@
 
                                 <span class="text-muted">|</span>
 
-                                {{-- Delete --}}
                                 <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
                                     @csrf @method('DELETE')
                                     <button class="text-xs text-red-500 hover:text-red-700"
